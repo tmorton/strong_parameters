@@ -25,10 +25,6 @@ module ActionView
       end
     end
 
-    class FormBuilder
-      include SignedFormBuilder
-    end
-
     module FormHelper
       # Implementation note: monkey-patching fields_for and form_for here
       # seems ugly.  Ideas?
@@ -80,3 +76,5 @@ module ActionView
 
   end
 end
+
+ActionView::Base.default_form_builder.send :include, ActionView::Helpers::SignedFormBuilder
