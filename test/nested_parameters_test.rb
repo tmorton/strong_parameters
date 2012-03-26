@@ -77,4 +77,15 @@ class NestedParametersTest < ActiveSupport::TestCase
     permitted = params.permit book: { genre: :type }
     assert_nil permitted[:book][:genre]
   end
+
+  test "permit with string keys" do
+    params = ActionController::Parameters.new({
+      book: {
+        genres: ["Tragedy"]
+      }
+    })
+    permitted = params.permit({"book" => "genres"})
+    assert_equal ["Tragedy"], permitted[:book][:genres]
+  end
+
 end

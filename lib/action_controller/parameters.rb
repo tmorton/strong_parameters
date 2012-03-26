@@ -35,9 +35,11 @@ module ActionController
 
       filters.each do |filter|
         case filter
-        when Symbol then
+        when Symbol, String then
+          filter = filter.to_sym
           params[filter] = self[filter] if has_key?(filter)
         when Hash then
+          filter = filter.with_indifferent_access
           self.slice(*filter.keys).each do |key, value|
             return unless value
 
