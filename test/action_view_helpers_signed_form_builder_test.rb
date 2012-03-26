@@ -34,7 +34,6 @@ class ActionViewHelpersSignedFormBuilderTest < ActiveSupport::TestCase
   end  
 
   test "form_signature should generate a hidden field named form_signature" do
-    @builder.allow_parameters "foo", "bar"
     sig = @builder.form_signature
     assert_match /input.*type=\"hidden\"/, sig
     assert_match /name=\"form_signature\"/, sig
