@@ -22,7 +22,7 @@ module ActionView
       end
 
       def form_signature
-        sig = ERB::Util.html_escape(params_for_sig.to_json)
+        sig = ERB::Util.html_escape(@allowed_fields.to_json)
         "<input type=\"hidden\" name=\"form_signature\" value=\"#{sig}\" />".html_safe
       end
     end
