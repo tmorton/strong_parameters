@@ -70,7 +70,7 @@ module ActionView
         output << fields_for
 
         # patch to insert the form sigature
-        output << builder.form_signature
+        output << builder.form_signature if builder.respond_to?(:form_signature)
 
         output.safe_concat('</form>')
       end
