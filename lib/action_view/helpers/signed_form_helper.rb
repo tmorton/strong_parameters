@@ -3,25 +3,27 @@ module ActionView
 
     module SignedFormBuilder
 
-      def field_list
-        @field_list ||= []
-      end
-
-      # Use this method to allow "raw" parameters
-      def allow_parameters(*params)
-        @field_list ||= []
-        @field_list += params.map { |p| p.to_s }
+      def params_for_sig
+        @allowed_fields ||= [] 
+        {object_name => @allowed_fields}
       end
 
       # Use this method to allow fields on this form builder.
       def allow_fields(*fields)
-        params = fields.map { |f| "#{object_name}[#{f}]" }
-        allow_parameters *params
+        @allowed_fields ||= []
+        params = fields.map { |f| f.to_s }
+        @allowed_fields += params
+      end
+
+      # Use this to allow a whole hash of fields, ie from fields_for
+      def allow_subfields(h)
+        @allowed_fields ||= []
+        @allowed_fields << h        
       end
 
       def form_signature
-        field_list_csv = field_list.join(',')
-        "<input type=\"hidden\" name=\"form_signature\" value=\"#{field_list_csv}\" />".html_safe
+        sig = ERB::Util.html_escape(params_for_sig.to_json)
+        "<input type=\"hidden\" name=\"form_signature\" value=\"#{sig}\" />".html_safe
       end
     end
 
@@ -35,8 +37,8 @@ module ActionView
         output.concat builder.hidden_field(:id) if output && options[:hidden_field_id] && !builder.emitted_hidden_id?
 
         # patch to pass the field_list up to parent builder
-        if builder.respond_to?(:field_list) && pb = options[:parent_builder]
-          pb.allow_parameters(*(builder.field_list))
+        if builder.respond_to?(:params_for_sig) && pb = options[:parent_builder]
+          pb.allow_subfields(builder.params_for_sig)
         end
 
         output
